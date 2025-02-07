@@ -6,9 +6,9 @@ function generateIdenticon(size, seed) {
   svg.setAttributeNS(null, 'width', size)
   svg.setAttributeNS(null, 'height', size)
 
-  let str = `${seed}` 
+  let str = `${seed}`
   str = str.length < 6 ? str.padEnd(6, ' ') : str
-  
+
   // SDBM hash algorithm
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -39,7 +39,7 @@ function generateIdenticon(size, seed) {
 
   svg.setAttributeNS(null, 'viewBox', `0 0 ${size} ${size}`)
   svg.style.backgroundColor = bgColor
-  
+
   // Create single path element for all shapes
   const path = document.createElementNS(svgns, 'path')
   path.setAttribute('fill', fgColor)
@@ -50,30 +50,35 @@ function generateIdenticon(size, seed) {
       for (let x = 0; x < grid; x++) {
           const cellHash = Math.abs(hash >> (x * 3 + y * 5)) & 15
           const shouldDrawShape = cellHash < 6
-          
+
           if (shouldDrawShape) {
-              const shapeType = cellHash % 3
-              
-              if (shapeType === 0) { // Square
-                  pathData += `M${x * cellSize},${y * cellSize} h${cellSize} v${cellSize} h-${cellSize}z `
-              } else if (shapeType === 1) { // Left Triangle
+              const shapeType = cellHash & 1
+
+              if (shapeType === 0) {
                   const cx = x * cellSize
                   const cy = y * cellSize
-                  
-                  pathData += `M${cx + cellSize},${cy + cellSize} `
-                  pathData += `h-${cellSize} v-${cellSize} z `
-              } else { // Right Triangle
+
+                  // Define the corners of the parallelogram
+                  pathData += `M${cx},${cy} `                       // Starting point (bottom-left corner)
+                  pathData += `L${cx + cellSize},${cy} `             // Move to bottom-right corner
+                  pathData += `L${cx + cellSize + cellSize / 2},${cy - cellSize} `  // Top-right corner (skewed)
+                  pathData += `L${cx + cellSize / 2},${cy - cellSize} `             // Top-left corner (skewed)
+                  pathData += `z `                                   // Close the path
+              } else {
                   const cx = x * cellSize
                   const cy = y * cellSize
-                  
-                  pathData += `M${cx},${cy + cellSize} `
-                  pathData += `h${cellSize} v-${cellSize} z `
+
+                  pathData += `M${cx + cellSize / 2},${cy + cellSize} `  // Start at bottom-left corner (skewed)
+                  pathData += `L${cx + cellSize + cellSize / 2},${cy + cellSize} ` // Bottom-right corner (skewed)
+                  pathData += `L${cx + cellSize},${cy} `                   // Top-right corner
+                  pathData += `L${cx},${cy} `                              // Top-left corner
+                  pathData += `z `
               }
           }
       }
   }
-  
+
   path.setAttribute('d', pathData)
   svg.appendChild(path)
-  return svg 
+  return svg
 }
