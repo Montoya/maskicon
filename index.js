@@ -45,38 +45,63 @@ function generateIdenticon(size, seed) {
   path.setAttribute('fill', fgColor)
   let pathData = ''
 
-  // Generate shapes
-  for (let y = 0; y < grid; y++) {
-      for (let x = 0; x < grid; x++) {
-          const cellHash = Math.abs(hash >> (x * 3 + y * 5)) & 15
-          const shouldDrawShape = cellHash < 6
 
-          if (shouldDrawShape) {
-              const shapeType = cellHash & 1
+    // Create grid to track filled cells
+    const filledGrid = Array(grid).fill().map(() => Array(grid).fill(false));
 
-              if (shapeType === 0) {
-                  const cx = x * cellSize
-                  const cy = y * cellSize
+    // Start from center to ensure connectivity
+    const startX = Math.floor(grid/2);
+    const startY = Math.floor(grid/2);
+    const stack = [[startX, startY]];
+    filledGrid[startX][startY] = true;
 
-                  // Define the corners of the parallelogram
-                  pathData += `M${cx},${cy} `                       // Starting point (bottom-left corner)
-                  pathData += `L${cx + cellSize},${cy} `             // Move to bottom-right corner
-                  pathData += `L${cx + cellSize + cellSize / 2},${cy - cellSize} `  // Top-right corner (skewed)
-                  pathData += `L${cx + cellSize / 2},${cy - cellSize} `             // Top-left corner (skewed)
-                  pathData += `z `                                   // Close the path
-              } else {
-                  const cx = x * cellSize
-                  const cy = y * cellSize
+    while (stack.length > 0) {
+        const [x, y] = stack.pop();
+        const cellHash = Math.abs(hash >> (x * 3 + y * 5)) & 15;
+        
+        // Get available neighbors
+        const neighbors = [];
+        const directions = [[0,1], [1,0], [0,-1], [-1,0]];
+        
+        for (const [dx, dy] of directions) {
+            const newX = x + dx;
+            const newY = y + dy;
+            if (newX >= 0 && newX < grid && newY >= 0 && newY < grid && !filledGrid[newX][newY]) {
+                neighbors.push([newX, newY]);
+            }
+        }
 
-                  pathData += `M${cx + cellSize / 2},${cy + cellSize} `  // Start at bottom-left corner (skewed)
-                  pathData += `L${cx + cellSize + cellSize / 2},${cy + cellSize} ` // Bottom-right corner (skewed)
-                  pathData += `L${cx + cellSize},${cy} `                   // Top-right corner
-                  pathData += `L${cx},${cy} `                              // Top-left corner
-                  pathData += `z `
-              }
-          }
-      }
-  }
+        // Add random unvisited neighbors to stack
+        while (neighbors.length > 0) {
+            const idx = Math.abs(cellHash + neighbors.length) % neighbors.length;
+            const [nextX, nextY] = neighbors.splice(idx, 1)[0];
+            stack.push([nextX, nextY]);
+            filledGrid[nextX][nextY] = true;
+        }
+
+        // Draw shape
+        const rotation = (cellHash % 4) * 90; // 0, 90, 180, or 270 degrees
+        const isSquare = cellHash % 5 === 0; // 20% chance of square
+        
+        if (isSquare) {
+            // Square
+            pathData += `M${x * cellSize},${y * cellSize} h${cellSize} v${cellSize} z `;
+        } else {
+            // Right triangle with rotation
+            const cx = x * cellSize;
+            const cy = y * cellSize;
+            
+            if (rotation === 0) {
+                pathData += `M${cx},${cy} h${cellSize} v${cellSize}z `;
+            } else if (rotation === 90) {
+                pathData += `M${cx + cellSize},${cy} v${cellSize} h-${cellSize}z `;
+            } else if (rotation === 180) {
+                pathData += `M${cx + cellSize},${cy + cellSize} h-${cellSize} v-${cellSize}z `;
+            } else { // 270
+                pathData += `M${cx},${cy + cellSize} v-${cellSize} h${cellSize}z `;
+            }
+        }
+    }
 
   path.setAttribute('d', pathData)
   svg.appendChild(path)
