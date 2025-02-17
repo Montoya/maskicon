@@ -12,10 +12,10 @@ function generateIdenticon(size, seed, circle = false) {
   // SDBM hash algorithm
   let hash = 0
   for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + (hash << 6) + (hash << 16) - hash
+    hash = str.charCodeAt(i) + (hash << 6) + (hash << 16) - hash
   }
 
- const neutralPairs = [
+  const neutralPairs = [
     ['#FF5C16', '#FCFCFC'],
     ['#FF5C16', '#131416'],
     ['#D075FF', '#FCFCFC'],
@@ -33,9 +33,9 @@ function generateIdenticon(size, seed, circle = false) {
     ['#131416', '#BAF24A'],
     ['#FCFCFC', '#89B0FF'],
     ['#131416', '#89B0FF'],
-]
+  ]
 
-const tonalPairs = [
+  const tonalPairs = [
   
     ['#FFA680', '#FF5C16'],
     ['#661800', '#FF5C16'],
@@ -63,38 +63,27 @@ const tonalPairs = [
     ['#E5FFC3', '#013330'],
     ['#190066', '#CCE7FF'],
     ['#CCE7FF', '#190066'],
-]
+  ]
 
-const complementaryPairs = [
-  ['#EAC2FF', '#013330'],
-  ['#013330', '#EAC2FF'],
+  const complementaryPairs = [
+    ['#EAC2FF', '#013330'],
+    ['#013330', '#EAC2FF'],
 
-  ['#CCE7FF', '#661800'],
-  ['#661800', '#CCE7FF'],
+    ['#CCE7FF', '#661800'],
+    ['#661800', '#CCE7FF'],
 
-  ['#E5FFC3', '#3D065F'],
-  ['#3D065F', '#E5FFC3'],
+    ['#E5FFC3', '#3D065F'],
+    ['#3D065F', '#E5FFC3'],
 
-  ['#FFA680', '#190066'],
-  ['#190066', '#FFA680'],
+    ['#FFA680', '#190066'],
+    ['#190066', '#FFA680'],
 
-  ['#CCE7FF', '#013330'],
-  ['#013330', '#CCE7FF'],
-]
+    ['#CCE7FF', '#013330'],
+    ['#013330', '#CCE7FF'],
+  ]
 
   // Color pairs
-  const colorPairs = neutralPairs.concat(tonalPairs).concat(complementaryPairs) /*[
-      ['#013330', '#EAC2FF'],
-      ['#EAC2FF', '#013330'],
-      ['#CCE7FF', '#661800'],
-      ['#661800', '#CCE7FF'],
-      ['#3D065F', '#E5FFC3'],
-      ['#E5FFC3', '#3D065F'],
-      ['#FFA680', '#190066'],
-      ['#190066', '#FFA680'],
-      ['#013330', '#CCE7FF'],
-      ['#CCE7FF', '#013330']
-  ]*/
+  const colorPairs = neutralPairs.concat(tonalPairs).concat(complementaryPairs)
 
   // Select colors based on hash
   const colorPairIndex = Math.abs(hash) % colorPairs.length
@@ -124,52 +113,52 @@ const complementaryPairs = [
   filledGrid[startX][startY] = true;
 
   while (stack.length > 0) {
-      const [x, y] = stack.pop();
-      const cellHash = Math.abs(hash >> (x * 3 + y * 5)) & 15;
-      
-      // Get available neighbors
-      const neighbors = [];
-      const directions = [[0,1], [1,0], [0,-1], [-1,0]];
-      
-      for (const [dx, dy] of directions) {
-          const newX = x + dx;
-          const newY = y + dy;
-          if (newX >= 0 && newX < grid && newY >= 0 && newY < grid && !filledGrid[newX][newY]) {
-              neighbors.push([newX, newY]);
-          }
+    const [x, y] = stack.pop();
+    const cellHash = Math.abs(hash >> (x * 3 + y * 5)) & 15;
+    
+    // Get available neighbors
+    const neighbors = [];
+    const directions = [[0,1], [1,0], [0,-1], [-1,0]];
+    
+    for (const [dx, dy] of directions) {
+      const newX = x + dx;
+      const newY = y + dy;
+      if (newX >= 0 && newX < grid && newY >= 0 && newY < grid && !filledGrid[newX][newY]) {
+        neighbors.push([newX, newY]);
       }
+    }
 
-      // Add random unvisited neighbors to stack
-      while (neighbors.length > 0) {
-          const idx = Math.abs(cellHash + neighbors.length) % neighbors.length;
-          const [nextX, nextY] = neighbors.splice(idx, 1)[0];
-          stack.push([nextX, nextY]);
-          filledGrid[nextX][nextY] = true;
-      }
+    // Add random unvisited neighbors to stack
+    while (neighbors.length > 0) {
+      const idx = Math.abs(cellHash + neighbors.length) % neighbors.length;
+      const [nextX, nextY] = neighbors.splice(idx, 1)[0];
+      stack.push([nextX, nextY]);
+      filledGrid[nextX][nextY] = true;
+    }
 
-      // Draw shape
-      const rotation = (cellHash % 4) * 90; // 0, 90, 180, or 270 degrees
-      const isSquare = cellHash % 5 === 0; // 20% chance of square
-      
-      // Adjust coordinates to include margin
-      const cx = margin + (x * cellSize);
-      const cy = margin + (y * cellSize);
-      
-      if (isSquare) {
-          // Square
-          pathData += `M${cx},${cy} h${cellSize} v${cellSize} h-${cellSize}z `;
-      } else {
-          // Right triangle with rotation
-          if (rotation === 0) {
-              pathData += `M${cx},${cy} h${cellSize} v${cellSize}z `;
-          } else if (rotation === 90) {
-              pathData += `M${cx + cellSize},${cy} v${cellSize} h-${cellSize}z `;
-          } else if (rotation === 180) {
-              pathData += `M${cx + cellSize},${cy + cellSize} h-${cellSize} v-${cellSize}z `;
-          } else { // 270
-              pathData += `M${cx},${cy + cellSize} v-${cellSize} h${cellSize}z `;
-          }
+    // Draw shape
+    const rotation = (cellHash % 4) * 90; // 0, 90, 180, or 270 degrees
+    const isSquare = cellHash % 5 === 0; // 20% chance of square
+    
+    // Adjust coordinates to include margin
+    const cx = margin + (x * cellSize);
+    const cy = margin + (y * cellSize);
+    
+    if (isSquare) {
+      // Square
+      pathData += `M${cx},${cy} h${cellSize} v${cellSize} h-${cellSize}z `;
+    } else {
+      // Right triangle with rotation
+      if (rotation === 0) {
+        pathData += `M${cx},${cy} h${cellSize} v${cellSize}z `;
+      } else if (rotation === 90) {
+        pathData += `M${cx + cellSize},${cy} v${cellSize} h-${cellSize}z `;
+      } else if (rotation === 180) {
+        pathData += `M${cx + cellSize},${cy + cellSize} h-${cellSize} v-${cellSize}z `;
+      } else { // 270
+        pathData += `M${cx},${cy + cellSize} v-${cellSize} h${cellSize}z `;
       }
+    }
   }
 
   path.setAttribute('d', pathData)
