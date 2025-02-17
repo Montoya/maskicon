@@ -1,4 +1,4 @@
-function generateIdenticon(size, seed, circle = false) {
+function generateIdenticon(seed, size = 100, circle = false) {
   const svgns = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgns, 'svg')
   svg.setAttributeNS(null, 'x', '0')
