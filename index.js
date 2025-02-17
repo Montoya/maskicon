@@ -1,4 +1,4 @@
-function generateIdenticon(size, seed) {
+function generateIdenticon(size, seed, circle = false) {
   const svgns = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(svgns, 'svg')
   svg.setAttributeNS(null, 'x', '0')
@@ -174,5 +174,18 @@ const complementaryPairs = [
 
   path.setAttribute('d', pathData)
   svg.appendChild(path)
+
+
+  if(circle) {
+    const clipPath = document.createElementNS(svgns, 'clipPath')
+    clipPath.setAttribute('id', 'circle-clip')
+    const circleClip = document.createElementNS(svgns, 'circle')
+    circleClip.setAttribute('cx', size/2)
+    circleClip.setAttribute('cy', size/2)
+    circleClip.setAttribute('r', size/2)
+    clipPath.appendChild(circleClip)
+    svg.appendChild(clipPath)
+    svg.setAttribute('clip-path', 'url(#circle-clip)')
+  }
   return svg
 }
