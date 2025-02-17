@@ -15,8 +15,75 @@ function generateIdenticon(size, seed) {
       hash = str.charCodeAt(i) + (hash << 6) + (hash << 16) - hash
   }
 
+ const neutralPairs = [
+    ['#FF5C16', '#FCFCFC'],
+    ['#FF5C16', '#131416'],
+    ['#D075FF', '#FCFCFC'],
+    ['#D075FF', '#131416'],
+    ['#BAF24A', '#FCFCFC'],
+    ['#BAF24A', '#131416'],
+    ['#89B0FF', '#FCFCFC'],
+    ['#89B0FF', '#131416'],
+
+    ['#FCFCFC', '#FF5C16'],
+    ['#131416', '#FF5C16'],
+    ['#FCFCFC', '#D075FF'],
+    ['#131416', '#D075FF'],
+    ['#FCFCFC', '#BAF24A'],
+    ['#131416', '#BAF24A'],
+    ['#FCFCFC', '#89B0FF'],
+    ['#131416', '#89B0FF'],
+]
+
+const tonalPairs = [
+  
+    ['#FFA680', '#FF5C16'],
+    ['#661800', '#FF5C16'],
+    ['#EAC2FF', '#D075FF'],
+    ['#3D065F', '#D075FF'],
+    ['#E5FFC3', '#BAF24A'],
+    ['#013330', '#BAF24A'],
+    ['#CCE7FF', '#89B0FF'],
+    ['#190066', '#89B0FF'],
+  
+    ['#FF5C16', '#FFA680'],
+    ['#FF5C16', '#661800'],
+    ['#D075FF', '#EAC2FF'],
+    ['#D075FF', '#3D065F'],
+    ['#BAF24A', '#E5FFC3'],
+    ['#BAF24A', '#013330'],
+    ['#89B0FF', '#CCE7FF'],
+    ['#89B0FF', '#190066'],
+  
+    ['#661800', '#FFA680'],
+    ['#FFA680', '#661800'],
+    ['#3D065F', '#EAC2FF'],
+    ['#EAC2FF', '#3D065F'],
+    ['#013330', '#E5FFC3'],
+    ['#E5FFC3', '#013330'],
+    ['#190066', '#CCE7FF'],
+    ['#CCE7FF', '#190066'],
+]
+
+const complementaryPairs = [
+  ['#EAC2FF', '#013330'],
+  ['#013330', '#EAC2FF'],
+
+  ['#CCE7FF', '#661800'],
+  ['#661800', '#CCE7FF'],
+
+  ['#E5FFC3', '#3D065F'],
+  ['#3D065F', '#E5FFC3'],
+
+  ['#FFA680', '#190066'],
+  ['#190066', '#FFA680'],
+
+  ['#CCE7FF', '#013330'],
+  ['#013330', '#CCE7FF'],
+]
+
   // Color pairs
-  const colorPairs = [
+  const colorPairs = neutralPairs.concat(tonalPairs).concat(complementaryPairs) /*[
       ['#013330', '#EAC2FF'],
       ['#EAC2FF', '#013330'],
       ['#CCE7FF', '#661800'],
@@ -27,7 +94,7 @@ function generateIdenticon(size, seed) {
       ['#190066', '#FFA680'],
       ['#013330', '#CCE7FF'],
       ['#CCE7FF', '#013330']
-  ]
+  ]*/
 
   // Select colors based on hash
   const colorPairIndex = Math.abs(hash) % colorPairs.length
