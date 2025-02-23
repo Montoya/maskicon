@@ -89,8 +89,8 @@ function generateIdenticon(seed, size = 100, circle = false) {
   const [bgColor, fgColor] = colorPairs[colorPairIndex]
 
   // SVG setup
-  const grid = 3 // Reduced from 4
-  const margin = size * 0.2 // 20% margin
+  const grid = 2
+  const margin = size * 0.25 // 25% margin
   const innerSize = size - (2 * margin)
   const cellSize = innerSize / grid
 
