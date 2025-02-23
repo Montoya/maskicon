@@ -1,6 +1,6 @@
 # maskicon
 
-<img src="preview.png?v=2">
+<img src="maskicon.png">
 
 ## Usage
 
