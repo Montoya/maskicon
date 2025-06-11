@@ -1,5 +1,7 @@
 # maskicon
 
+An identicon generator in the style of the MetaMask brand system.
+
 <img src="maskicon.png">
 
 ## Usage
